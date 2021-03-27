@@ -6,6 +6,7 @@ function Board(props) {
     const [board, setBoard] = useState([[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]]);
     const [statusText, setStatusText] = useState("Test")
     const [timer, setTimer] = useState(0)
+    const [isLoded, setIsLoad] = useState(false)
 
     const handleChange = (row, column, newNumber) => {
         let copy = [...board];
@@ -47,42 +48,35 @@ function Board(props) {
     }
 
     useEffect(() => {
+
         // Update the document title using the browser API
         document.title = `You clicked ${timer} times`;
-        console.log("Mounted" + timer);
-        setInterval(() => {
+        //console.log("Mounted" + timer);
+        let intervalId;
+        intervalId = setInterval(() => {
             setTimer(timer + 1)
         }, 1000);
-    });
+        if (isLoded == false) {
+            setIsLoad(true)
+            fetch("https://us-central1-skooldio-courses.cloudfunctions.net/react_01/random")
+                .then(resp => {
+                    //console.log(resp)
+                    return resp.json();
+                }).then(resp => {
+                    console.log(resp.board)
+                    setBoard(resp.board);
+                    setTimer(0)
+                })
+        }
+        return () => clearInterval(intervalId);
 
-    //componentDidMount() 
-    // function startCounter() {
-    //     console.log("Mounted");
-    //     useInterval(() => {
-    //         setTimer(timer + 1)
-    //     }, 1000);
-    // };
+    }, [timer, board]);
 
-    function useInterval(callback, delay) {
-        const savedCallback = useRef();
 
-        // Remember the latest callback.
-        useEffect(() => {
-            savedCallback.current = callback;
-        }, [callback]);
-
-        // Set up the interval.
-        useEffect(() => {
-            let id = setInterval(() => {
-                savedCallback.current();
-            }, delay);
-            return () => clearInterval(id);
-        }, [delay]);
-    }
 
     return (
         <div>
-            <p className="timer">Elaspsed Time: 10 Seconds</p>
+            <p className="timer">Elaspsed Time: {timer} Seconds</p>
             <div className="board">
                 {
                     board.map((row, i) => row.map((number, j) =>
@@ -98,6 +92,7 @@ function Board(props) {
                 }
 
             </div >
+            <button className="retart-button">Restart</button> &nbsp;
             <button
                 onClick={submit}
             >Submit</button>
