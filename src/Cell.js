@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
+import React, { Component } from 'react'
 
-function Cell(props) {
+class Cell extends Component {
     // const [number, setNumber] = useState(1)
-
-    return (
-        <div onClick={(e => {
-            if (props.isInitial) {
-                return
-            }
-            props.onChange((props.number + 1) % 5)
-        })}
-            className={`cell ${props.isInitial ? 'initial' : ''}`
-            }
-        > { props.number !== 0 && props.number}</div >
-    );
+    render() {
+        return (
+            <div onClick={(e => {
+                if (this.props.isInitial) {
+                    return
+                }
+                this.props.onChange((this.props.number + 1) % 5)
+            })}
+                className={`cell ${this.props.isInitial ? 'initial' : ''}`
+                }
+            > { this.props.number !== 0 && this.props.number}</div >
+        );
+    }
 }
-
 
 export default Cell;

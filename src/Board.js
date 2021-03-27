@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Cell from './Cell'
 
 function Board(props) {
     const [board, setBoard] = useState([[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]]);
     const [statusText, setStatusText] = useState("Test")
+    const [timer, setTimer] = useState(0)
 
     const handleChange = (row, column, newNumber) => {
         let copy = [...board];
@@ -45,9 +46,43 @@ function Board(props) {
 
     }
 
+    useEffect(() => {
+        // Update the document title using the browser API
+        document.title = `You clicked ${timer} times`;
+        console.log("Mounted" + timer);
+        setInterval(() => {
+            setTimer(timer + 1)
+        }, 1000);
+    });
+
+    //componentDidMount() 
+    // function startCounter() {
+    //     console.log("Mounted");
+    //     useInterval(() => {
+    //         setTimer(timer + 1)
+    //     }, 1000);
+    // };
+
+    function useInterval(callback, delay) {
+        const savedCallback = useRef();
+
+        // Remember the latest callback.
+        useEffect(() => {
+            savedCallback.current = callback;
+        }, [callback]);
+
+        // Set up the interval.
+        useEffect(() => {
+            let id = setInterval(() => {
+                savedCallback.current();
+            }, delay);
+            return () => clearInterval(id);
+        }, [delay]);
+    }
 
     return (
         <div>
+            <p className="timer">Elaspsed Time: 10 Seconds</p>
             <div className="board">
                 {
                     board.map((row, i) => row.map((number, j) =>
